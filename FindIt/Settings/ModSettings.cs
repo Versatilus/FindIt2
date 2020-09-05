@@ -33,6 +33,8 @@ namespace FindIt
 
         internal static bool includePOinstances = false;
 
+        internal static int scalingValue = 100;
+
         internal static KeyBinding searchKey = new KeyBinding { keyCode = (int)KeyCode.F, control = true, shift = false, alt = false };
 
         internal static KeyBinding allKey = new KeyBinding { keyCode = (int)KeyCode.Alpha1, control = false, shift = false, alt = true };
@@ -122,6 +124,9 @@ namespace FindIt
 
         [XmlElement("IncludePOinstances")]
         public bool IncludePOinstances { get => Settings.includePOinstances; set => Settings.includePOinstances = value; }
+
+        [XmlElement("ScalingValue")]
+        public int ScalingValue { get => Settings.scalingValue; set => Settings.scalingValue = value; }
 
         [XmlElement("SearchKey")]
         public KeyBinding SearchKey { get => Settings.searchKey; set => Settings.searchKey = value; }

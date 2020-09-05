@@ -1,18 +1,22 @@
 // modified from SamsamTS's original Find It mod
 // https://github.com/SamsamTS/CS-FindIt
 
+// From SamsamTS:
+// Figuring all this was a pain (no documentation whatsoever)
+// So if your are using it for your mod consider thanking me (SamsamTS)
+// Extended Public Transport UI's code helped me a lot so thanks a lot AcidFire
+
+// Some extra methods were added by sway. Blame it on me if it doesn't work
+
 using System.Collections.Generic;
 using UnityEngine;
 using ColossalFramework.UI;
+using FindIt.GUI;
 
 namespace SamsamTS
 {
     public class UIUtils
     {
-        // From SamsamTS: 
-        // Figuring all this was a pain (no documentation whatsoever)
-        // So if your are using it for your mod consider thanking me (SamsamTS)
-        // Extended Public Transport UI's code helped me a lot so thanks a lot AcidFire
         public static UIButton CreateButton(UIComponent parent)
         {
             UIButton button = (UIButton)parent.AddUIComponent<UIButton>();
@@ -265,6 +269,28 @@ namespace SamsamTS
             return colorField;
         }
 
+        public static UISlider CreateSlider(UIComponent parent, float min, float max, float step)
+        {
+            UISlider slider = parent.AddUIComponent<UISlider>();
+            slider.minValue = min;
+            slider.maxValue = max;
+            slider.stepSize = step;
+
+            slider.atlas = GetAtlas("Ingame");
+            slider.backgroundSprite = "WhiteRect";
+            slider.color = new Color32(110, 110, 110, 255);
+            slider.size = new Vector2(200, 10);
+            slider.scrollWheelAmount = 5.0f;
+
+            UISprite thumb = slider.AddUIComponent<UISprite>();
+            thumb.atlas = GetAtlas("Ingame");
+            thumb.spriteName = "SliderFill";
+            thumb.size = new Vector2(10, 15);
+            slider.thumbObject = thumb;
+
+            return slider;
+        }
+
         public static void ResizeIcon(UISprite icon, Vector2 maxSize)
         {
             icon.width = icon.spriteInfo.width;
@@ -304,6 +330,16 @@ namespace SamsamTS
             }
 
             return _atlases[name];
+        }
+
+        public static void ChangePanelScale()
+        {
+            UITabContainer gtsContainer = GameObject.Find("TSContainer").GetComponent<UITabContainer>();
+
+            gtsContainer.transform.localScale = new Vector3(FindIt.Settings.scalingValue * 0.01f, FindIt.Settings.scalingValue * 0.01f, 1.0f);
+
+            UIComponent mainToolStrip = GameObject.Find("MainToolstrip").GetComponent<UIComponent>();
+            gtsContainer.relativePosition = new Vector3(gtsContainer.relativePosition.x, mainToolStrip.relativePosition.y - (gtsContainer.height * FindIt.Settings.scalingValue * 0.01f));
         }
     }
 }

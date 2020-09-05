@@ -15,6 +15,7 @@ namespace FindIt.GUI
 
         private UIDropDown instanceCounterSort;
         private UICheckBox includePOinstances;
+        private UILabel scaleValueLabel;
 
         public override void Start()
         {
@@ -42,6 +43,32 @@ namespace FindIt.GUI
             close.relativePosition = new Vector3(width - close.width, 0);
             close.eventClicked += (c, p) => Close();
 
+            // scaling label
+            UILabel scaleLabel = AddUIComponent<UILabel>();
+            scaleLabel.text = "Panel Scale [Read workshop FAQ first!]";
+            scaleLabel.textScale = 0.8f;
+            scaleLabel.textColor = new Color32(0, 0, 0, 255);
+            scaleLabel.relativePosition = new Vector3(title.relativePosition.x,  title.relativePosition.y + title.height + 20);
+
+            // scale slider
+            UISlider scaleSlider = SamsamTS.UIUtils.CreateSlider(this, 50, 100, 1);
+            scaleSlider.value = Settings.scalingValue;
+            scaleSlider.relativePosition = new Vector3(scaleLabel.relativePosition.x, scaleLabel.relativePosition.y + scaleLabel.height + 10);
+            scaleSlider.eventValueChanged += (c, i) =>
+            {
+                Settings.scalingValue = (int)scaleSlider.value;
+                XMLUtils.SaveSettings();
+                scaleValueLabel.text = $"{Settings.scalingValue} %";
+                SamsamTS.UIUtils.ChangePanelScale();
+            };
+
+            // scale value label
+            scaleValueLabel = AddUIComponent<UILabel>();
+            scaleValueLabel.text = $"{Settings.scalingValue} %";
+            scaleValueLabel.textScale = 0.8f;
+            scaleValueLabel.textColor = new Color32(0, 0, 0, 255);
+            scaleValueLabel.relativePosition = new Vector3(scaleSlider.relativePosition.x + scaleSlider.width + 10, scaleSlider.relativePosition.y);
+
             // Sort custom tag list alphabetically. Default = sort by number of assets in each tag
             UICheckBox customTagListSort = SamsamTS.UIUtils.CreateCheckBox(this);
             customTagListSort.isChecked = Settings.customTagListSort;
@@ -49,7 +76,7 @@ namespace FindIt.GUI
             customTagListSort.label.textScale = 0.8f;
             customTagListSort.width = size.x;
             customTagListSort.label.textColor = new Color32(0, 0, 0, 255);
-            customTagListSort.relativePosition = new Vector3(title.relativePosition.x, title.relativePosition.y + title.height + 20);
+            customTagListSort.relativePosition = new Vector3(scaleSlider.relativePosition.x, scaleSlider.relativePosition.y + scaleSlider.height + 20);
             customTagListSort.eventCheckChanged += (c, i) =>
             {
                 Settings.customTagListSort = customTagListSort.isChecked;

@@ -223,15 +223,15 @@ namespace FindIt.GUI
             tagToolIcon.relativePosition = new Vector3(vanillaFilter.relativePosition.x + vanillaFilter.width + 5, 7);
             tagToolIcon.eventClicked += (c, p) =>
             {
-                if (tagPanel == null)
+                if (tagPanel.isVisible == false)
                 {
                     tagToolIcon.opacity = 1.0f;
-                    CreateCustomTagPanel();
+                    tagPanel.isVisible = true;
                 }
                 else
                 {
                     tagToolIcon.opacity = 0.5f;
-                    DestroyCustomTagPanel();
+                    tagPanel.isVisible = false;
                     Search();
                 }
                 UpdateTopPanelsPosition();
@@ -245,7 +245,7 @@ namespace FindIt.GUI
 
             tagToolIcon.eventMouseLeave += (c, p) =>
             {
-                if (tagPanel != null)
+                if (tagPanel.isVisible)
                 {
                     tagToolIcon.opacity = 1.0f;
                 }
@@ -266,15 +266,15 @@ namespace FindIt.GUI
             
             extraFiltersIcon.eventClicked += (c, p) =>
             {
-                if (extraFiltersPanel == null)
+                if (extraFiltersPanel.isVisible == false)
                 {
                     extraFiltersIcon.opacity = 1.0f;
-                    CreateExtraFiltersPanel();
+                    extraFiltersPanel.isVisible = true;
                 }
                 else
                 {
                     extraFiltersIcon.opacity = 0.5f;
-                    DestroyExtraFiltersPanel();
+                    extraFiltersPanel.isVisible = false;
                     Search();
                 }
                 UpdateTopPanelsPosition();
@@ -287,7 +287,7 @@ namespace FindIt.GUI
 
             extraFiltersIcon.eventMouseLeave += (c, p) =>
             {
-                if (extraFiltersPanel != null)
+                if (extraFiltersPanel.isVisible)
                 {
                     extraFiltersIcon.opacity = 1.0f;
                 }
@@ -420,6 +420,8 @@ namespace FindIt.GUI
             filterDecal.isVisible = false;
             filterDecal.relativePosition = new Vector3(sortButton.relativePosition.x + sortButton.width, 0);
 
+            CreateCustomTagPanel();
+            CreateExtraFiltersPanel();
             UpdateFilterPanels();
 
             size = Vector2.zero;
@@ -428,6 +430,8 @@ namespace FindIt.GUI
         protected override void OnVisibilityChanged()
         {
             base.OnVisibilityChanged();
+
+            SamsamTS.UIUtils.ChangePanelScale();
 
             if (input != null && !isVisible)
             {
@@ -524,51 +528,37 @@ namespace FindIt.GUI
             extraFiltersPanel.atlas = SamsamTS.UIUtils.GetAtlas("Ingame");
             extraFiltersPanel.backgroundSprite = "GenericTab";
             extraFiltersPanel.color = new Color32(196, 200, 206, 255);
-            extraFiltersPanel.isVisible = true;
+            extraFiltersPanel.isVisible = false;
             extraFiltersPanel.size = new Vector2(sizeLabel.position.x, 35);
             extraFiltersPanel.relativePosition = new Vector2(0, -inputPanel.height - extraFiltersPanel.height - 40);
-        }
-
-        private void DestroyExtraFiltersPanel()
-        {
-            if (extraFiltersPanel == null) return;
-            extraFiltersPanel.Close();
-            RemoveUIComponent(extraFiltersPanel);
-            extraFiltersPanel = null;
         }
 
         private void CreateCustomTagPanel()
         {
             if (tagPanel != null) return;
+
             tagPanel = AddUIComponent<UIFilterTag>();
             tagPanel.atlas = SamsamTS.UIUtils.GetAtlas("Ingame");
             tagPanel.backgroundSprite = "GenericTab";
             tagPanel.color = new Color32(196, 200, 206, 255);
-            tagPanel.isVisible = true;
+            tagPanel.isVisible = false;
             tagPanel.size = new Vector2(sizeLabel.position.x, 35);
             tagPanel.relativePosition = new Vector2(0, -inputPanel.height - tagPanel.height - 40);
-        }
 
-        private void DestroyCustomTagPanel()
-        {
-            if (tagPanel == null) return;
-            tagPanel.Close();
-            RemoveUIComponent(tagPanel);
-            tagPanel = null;
         }
 
         private void UpdateTopPanelsPosition()
         {
-            if (extraFiltersPanel != null && tagPanel != null)
+            if (extraFiltersPanel.isVisible && tagPanel.isVisible)
             {
                 tagPanel.relativePosition = new Vector2(0, -inputPanel.height - tagPanel.height - 40);
                 extraFiltersPanel.relativePosition = new Vector2(0, -inputPanel.height - tagPanel.height * 2 - 40);
             }
-            else if (extraFiltersPanel != null && tagPanel == null)
+            else if (extraFiltersPanel.isVisible && !tagPanel.isVisible)
             {
                 extraFiltersPanel.relativePosition = new Vector2(0, -inputPanel.height - extraFiltersPanel.height - 40);
             }
-            else if (extraFiltersPanel == null && tagPanel != null)
+            else if (!extraFiltersPanel.isVisible && tagPanel.isVisible)
             {
                 tagPanel.relativePosition = new Vector2(0, -inputPanel.height - tagPanel.height - 40);
             }
